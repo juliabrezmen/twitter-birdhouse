@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import com.bd.R;
 import com.bd.presenters.LoginPresenter;
 import com.twitter.sdk.android.core.Callback;
@@ -46,7 +45,6 @@ public class LoginActivity extends Activity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.i("app", "in onActivityResult");
         // Pass the activity result to the login button.
         mLoginButton.onActivityResult(requestCode, resultCode, data);
     }
