@@ -5,4 +5,8 @@
         <!-- Customize your theme here. -->
     </style>
 
+    <style name="Twitter.Theme" parent="AppTheme">
+        <item name="android:windowBackground">@color/gray_1000</item>
+    </style>
+
 </resources>

@@ -1,12 +1,12 @@
 package com.bd.presenters;
 
-import android.app.Activity;
 import com.bd.ui.HomeActivity;
+import com.bd.ui.LoginActivity;
 
 public class LoginPresenter {
-    private Activity mActivity;
+    private LoginActivity mActivity;
 
-    public void initPresenter(Activity activity) {
+    public void initPresenter(LoginActivity activity) {
         mActivity = activity;
     }
 
