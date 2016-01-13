@@ -11,7 +11,9 @@ import com.twitter.sdk.android.core.services.StatusesService;
 import java.util.List;
 
 public class HomePresenter {
-    HomeActivity mActivity;
+    private TwitterApiClient twitterApiClient;
+    private HomeActivity mActivity;
+    private  StatusesService statusesService;
 
     public void initPresenter(HomeActivity activity) {
         if (!isUserSignedIn()) {
@@ -19,6 +21,8 @@ public class HomePresenter {
             LoginActivity.start(activity);
         } else {
             mActivity = activity;
+            twitterApiClient = TwitterCore.getInstance().getApiClient();
+            statusesService = twitterApiClient.getStatusesService();
         }
     }
 
@@ -27,9 +31,7 @@ public class HomePresenter {
         return session != null;
     }
 
-    public void onShowTweetsClicked() {
-        TwitterApiClient twitterApiClient = TwitterCore.getInstance().getApiClient();
-        StatusesService statusesService = twitterApiClient.getStatusesService();
+    public void loadTweets() {
         statusesService.homeTimeline(50, null, null, null, null, null, null, new Callback<List<Tweet>>() {
             @Override
             public void success(Result<List<Tweet>> result) {
