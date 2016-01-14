@@ -30,6 +30,12 @@ public class HomeActivity extends Activity {
         homePresenter.initPresenter();
     }
 
+    @Override
+    protected void onDestroy() {
+        homePresenter.onActivityDestroy();
+        super.onDestroy();
+    }
+
     private void initView() {
         setContentView(R.layout.home_layout);
 

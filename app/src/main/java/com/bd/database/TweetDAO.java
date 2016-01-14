@@ -8,7 +8,9 @@ import java.util.List;
 
 public class TweetDAO {
     private  Realm realm;
+    private Context context;
     public TweetDAO(Context context){
+        this.context=context;
         realm = Realm.getInstance(context);
     }
 
@@ -17,12 +19,20 @@ public class TweetDAO {
         return realm.where(TweetData.class).findAll();
     }
 
-    public void saveTweet(List<TweetData> tweetDataList){
-        realm.beginTransaction();
-        realm.clear(TweetData.class);
-        for (TweetData tweetData : tweetDataList) {
-            realm.copyToRealm(tweetData);
-        }
-        realm.commitTransaction();
+    public void saveTweet(final List<TweetData> tweetDataList){
+        Realm.getInstance(context).executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                realm.clear(TweetData.class);
+                for (TweetData tweetData : tweetDataList) {
+                    realm.copyToRealm(tweetData);
+                }
+                realm.close();
+            }
+        });
+    }
+
+    public void close() {
+        realm.close();
     }
 }

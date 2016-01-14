@@ -17,6 +17,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <service android:name=".services.TwitterSyncService"/>
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="6945c0241176676026050d58427f4ccff9c675e8" />
