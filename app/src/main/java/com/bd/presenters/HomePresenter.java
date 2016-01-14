@@ -1,6 +1,9 @@
 package com.bd.presenters;
 
 import android.util.Log;
+import com.bd.database.Converter;
+import com.bd.database.TweetDAO;
+import com.bd.database.TweetData;
 import com.bd.ui.HomeActivity;
 import com.bd.ui.LoginActivity;
 import com.twitter.sdk.android.Twitter;
@@ -11,19 +14,27 @@ import com.twitter.sdk.android.core.services.StatusesService;
 import java.util.List;
 
 public class HomePresenter {
-    private TwitterApiClient twitterApiClient;
-    private HomeActivity mActivity;
-    private  StatusesService statusesService;
+    private HomeActivity activity;
+    private StatusesService statusesService;
 
-    public void initPresenter(HomeActivity activity) {
-        if (!isUserSignedIn()) {
-            activity.finish();
-            LoginActivity.start(activity);
-        } else {
-            mActivity = activity;
-            twitterApiClient = TwitterCore.getInstance().getApiClient();
+    public HomePresenter(HomeActivity activity) {
+        this.activity = activity;
+    }
+
+    // FIXME: 13.01.2016 check for network
+    public void initPresenter() {
+        if (isUserSignedIn()) {
+            TwitterApiClient twitterApiClient = TwitterCore.getInstance().getApiClient();
             statusesService = twitterApiClient.getStatusesService();
+            loadTweetsFromDatabase();
+        } else {
+            LoginActivity.start(activity);
+            activity.finish();
         }
+    }
+
+    public void onPullToRefresh() {
+        loadTweets();
     }
 
     private boolean isUserSignedIn() {
@@ -31,22 +42,33 @@ public class HomePresenter {
         return session != null;
     }
 
-    public void loadTweets() {
+    private void loadTweetsFromDatabase() {
+        TweetDAO tweetDAO = new TweetDAO(activity.getApplicationContext());
+        List<TweetData> results = tweetDAO.getAllTweets();
+        if (results != null) {
+            Log.i("app", String.valueOf(results.size()));
+            activity.setHomeTimelineList(results);
+        }
+    }
+
+    private void loadTweets() {
         statusesService.homeTimeline(50, null, null, null, null, null, null, new Callback<List<Tweet>>() {
             @Override
             public void success(Result<List<Tweet>> result) {
                 if (result.data != null) {
-                    mActivity.setHomeTimelineList(result.data);
-                    for (Tweet tweet : result.data) {
-//                        Log.i("Birdhouse", tweet.text);
-
-                    }
+                    // write to realm database
+                    List<TweetData> tweetDataList = Converter.toTweetDataList(result.data);
+                    TweetDAO tweetDAO = new TweetDAO(activity.getApplicationContext());
+                    tweetDAO.saveTweet(tweetDataList);
+                    activity.setHomeTimelineList(tweetDataList);
                 }
+                activity.hidePullToRefresh();
             }
 
             @Override
             public void failure(TwitterException e) {
                 Log.i("Birdhouse", "Failed " + e.getMessage());
+                activity.hidePullToRefresh();
             }
         });
     }

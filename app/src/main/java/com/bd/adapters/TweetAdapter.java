@@ -1,11 +1,8 @@
 package com.bd.adapters;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapShader;
-import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,46 +10,47 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.bd.R;
 import com.bd.database.TweetData;
+import com.bd.imageloader.CircleTransform;
 import com.bd.utils.DateUtils;
 import com.bd.utils.UrlUtils;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Transformation;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> {
-    private List<TweetData> mTweetList;
+    private List<TweetData> tweetDataList;
     private Context context;
 
     public TweetAdapter(Context context) {
-        mTweetList = new ArrayList<>();
+        this.tweetDataList = new ArrayList<>();
         this.context = context;
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+    public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int position) {
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.tweet_item, viewGroup, false);
         return new ViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder viewHolder, int i) {
-        TweetData tweet = mTweetList.get(i);
+    public void onBindViewHolder(ViewHolder viewHolder, int position) {
+        TweetData tweet = tweetDataList.get(position);
 
         viewHolder.txtFullName.setText(tweet.getFullName());
         viewHolder.txtNickName.setText(tweet.getNickName());
-        Picasso.with(context).load(UrlUtils.createOriginImageUrl(tweet.getAvatarUrl())).transform(new CircleTransform()).into(viewHolder.imgAvatar);
-
         viewHolder.txtTweetText.setText(tweet.getText());
         viewHolder.txtFavouriteCount.setText(String.valueOf(tweet.getFavoriteCount()));
         viewHolder.txtRetweetCount.setText(String.valueOf(tweet.getRetweetCount()));
+        viewHolder.txtCreatedAt.setText(DateUtils.createShortDate(tweet.getDate()));
         initFavoriteView(viewHolder, tweet);
         initRetweetView(viewHolder, tweet);
 
-        viewHolder.txtCreatedAt.setText(DateUtils.createShortDate(tweet.getDate()));
+        String imageUrl = UrlUtils.createOriginImageUrl(tweet.getAvatarUrl());
+        if (!TextUtils.isEmpty(imageUrl)) {
+            Picasso.with(context).load(imageUrl).transform(new CircleTransform()).into(viewHolder.imgAvatar);
+        }
     }
-
 
     private void initRetweetView(ViewHolder viewHolder, TweetData tweet) {
         if (tweet.isRetweeted()) {
@@ -76,16 +74,16 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
 
     @Override
     public int getItemCount() {
-        return mTweetList.size();
+        return tweetDataList.size();
     }
 
     public void updateData(List<TweetData> tweetList) {
-        if (mTweetList != null) {
-            this.mTweetList = tweetList;
+        if (tweetDataList != null) {
+            this.tweetDataList = tweetList;
         }
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    static class ViewHolder extends RecyclerView.ViewHolder {
         TextView txtTweetText;
         TextView txtCreatedAt;
         TextView txtFullName;
@@ -110,37 +108,5 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
         }
     }
 
-    private class CircleTransform implements Transformation {
-        @Override
-        public Bitmap transform(Bitmap source) {
-            int size = Math.min(source.getWidth(), source.getHeight());
 
-            int x = (source.getWidth() - size) / 2;
-            int y = (source.getHeight() - size) / 2;
-
-            Bitmap squaredBitmap = Bitmap.createBitmap(source, x, y, size, size);
-            if (squaredBitmap != source) {
-                source.recycle();
-            }
-
-            Bitmap bitmap = Bitmap.createBitmap(size, size, source.getConfig());
-
-            Canvas canvas = new Canvas(bitmap);
-            Paint paint = new Paint();
-            BitmapShader shader = new BitmapShader(squaredBitmap, BitmapShader.TileMode.CLAMP, BitmapShader.TileMode.CLAMP);
-            paint.setShader(shader);
-            paint.setAntiAlias(true);
-
-            float r = size / 2f;
-            canvas.drawCircle(r, r, r, paint);
-
-            squaredBitmap.recycle();
-            return bitmap;
-        }
-
-        @Override
-        public String key() {
-            return "circle";
-        }
-    }
 }

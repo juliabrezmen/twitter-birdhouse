@@ -1,5 +1,7 @@
 package com.bd.database;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import com.twitter.sdk.android.core.models.Tweet;
 
 import java.text.ParseException;
@@ -7,39 +9,48 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class Converter {
-    private static TweetData convertTweet(Tweet tweet) {
+
+    private static final SimpleDateFormat TWEET_DATE_FORMATTER = new SimpleDateFormat("EEE MMM dd HH:mm:ss ZZZZZ yyyy", Locale.getDefault());
+
+    @NonNull
+    private static TweetData toTweetData(@NonNull Tweet tweet) {
         TweetData tweetData = new TweetData();
         tweetData.setText(tweet.text);
         tweetData.setFavoriteCount(tweet.favoriteCount);
         tweetData.setRetweetCount(tweet.retweetCount);
         tweetData.setFavorited(tweet.favorited);
         tweetData.setRetweeted(tweet.retweeted);
-        setTweetDate(tweet, tweetData);
+        tweetData.setDate(parseDate(tweet.createdAt));
+
         tweetData.setFullName(tweet.user.name);
         tweetData.setNickName("@" + tweet.user.screenName);
         tweetData.setAvatarUrl(tweet.user.profileImageUrl);
         return tweetData;
     }
 
-    private static void setTweetDate(Tweet tweet, TweetData tweetData) {
-        String createdAt = tweet.createdAt;
-        SimpleDateFormat parser = new SimpleDateFormat("EEE MMM dd HH:mm:ss ZZZZZ yyyy");
-        try {
-            Date convertedDate = parser.parse(createdAt);
-            tweetData.setDate(convertedDate);
-        } catch (ParseException e) {
-            e.printStackTrace();
+    @Nullable
+    private static Date parseDate(@Nullable String createdAt) {
+        Date convertedDate = null;
+        if (createdAt != null) {
+            try {
+                convertedDate = TWEET_DATE_FORMATTER.parse(createdAt);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
+        return convertedDate;
     }
 
-    public static ArrayList<TweetData> convertTweetList(List<Tweet> tweetList) {
+    @NonNull
+    public static List<TweetData> toTweetDataList(@NonNull List<Tweet> tweetList) {
         List<TweetData> tweetDataList = new ArrayList<>(tweetList.size());
         for (Tweet tweet : tweetList) {
-            tweetDataList.add(convertTweet(tweet));
+            tweetDataList.add(toTweetData(tweet));
         }
-        return (ArrayList<TweetData>) tweetDataList;
+        return tweetDataList;
     }
 
 }

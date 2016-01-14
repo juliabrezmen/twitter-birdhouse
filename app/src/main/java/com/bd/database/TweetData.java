@@ -1,8 +1,11 @@
 package com.bd.database;
 
+import io.realm.RealmObject;
+
 import java.util.Date;
 
-public class TweetData {
+public class TweetData extends RealmObject {
+
     private String text;
     private int favoriteCount;
     private int retweetCount;

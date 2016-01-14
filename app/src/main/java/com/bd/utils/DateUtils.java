@@ -60,9 +60,7 @@ public class DateUtils {
     @Nullable
     public static String createShortDate(Date tweetDate) {
         String shortDate = null;
-        if (tweetDate == null) {
-            return null;
-        } else {
+        if (tweetDate != null) {
             Calendar currentCalendar = Calendar.getInstance();
             Calendar tweetCalendar = Calendar.getInstance();
             tweetCalendar.setTime(tweetDate);
@@ -96,8 +94,9 @@ public class DateUtils {
                     }
                 }
             }
-
-            return shortDate;
         }
+
+        return shortDate;
     }
+
 }
