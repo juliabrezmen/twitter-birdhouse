@@ -1,33 +1,38 @@
 package com.bd.presenters;
 
-import android.util.Log;
+import com.bd.broadcasts.TimelineUpdateBroadcast;
 import com.bd.database.TweetDAO;
 import com.bd.database.TweetData;
+import com.bd.services.Action;
 import com.bd.services.TwitterSyncService;
 import com.bd.ui.HomeActivity;
 import com.bd.ui.LoginActivity;
+import com.bd.utils.L;
 import com.twitter.sdk.android.Twitter;
-import com.twitter.sdk.android.core.TwitterSession;
 
 import java.util.List;
 
 public class HomePresenter {
     private HomeActivity activity;
-//    private StatusesService statusesService;
     private TweetDAO tweetDAO;
+    private TimelineUpdateBroadcast timelineUpdateBroadcast;
 
     public HomePresenter(HomeActivity activity) {
         this.activity = activity;
     }
 
-    // FIXME: 13.01.2016 check for network
     public void initPresenter() {
         if (isUserSignedIn()) {
-//            TwitterApiClient twitterApiClient = TwitterCore.getInstance().getApiClient();
-//            statusesService = twitterApiClient.getStatusesService();
             tweetDAO = new TweetDAO(activity.getApplicationContext());
+            timelineUpdateBroadcast = new TimelineUpdateBroadcast(activity.getApplicationContext());
+            timelineUpdateBroadcast.register(new TimelineUpdateBroadcast.Listener() {
+                @Override
+                public void onTimelineUpdated() {
+                    loadTweetsFromDatabase();
+                }
+            });
             loadTweetsFromDatabase();
-            TwitterSyncService.start(activity.getApplicationContext(), TwitterSyncService.Action.LOAD_TWEETS);
+            TwitterSyncService.start(activity.getApplicationContext(), Action.LOAD_TWEETS);
         } else {
             LoginActivity.start(activity);
             activity.finish();
@@ -41,44 +46,22 @@ public class HomePresenter {
 
 
     public void onActivityDestroy() {
+        if(timelineUpdateBroadcast != null) {
+            timelineUpdateBroadcast.unregister();
+        }
         if (tweetDAO != null) {
             tweetDAO.close();
         }
     }
 
     private boolean isUserSignedIn() {
-        TwitterSession session = Twitter.getSessionManager().getActiveSession();
-        return session != null;
+        return Twitter.getSessionManager().getActiveSession() != null;
     }
 
     private void loadTweetsFromDatabase() {
-
         List<TweetData> results = tweetDAO.getAllTweets();
-        if (results != null) {
-            Log.i("app", String.valueOf(results.size()));
-            activity.setHomeTimelineList(results);
-        }
+        L.v("Load tweets from database: %d", results.size());
+        activity.setHomeTimelineList(results);
     }
-
-//    private void loadTweets() {
-//        statusesService.homeTimeline(50, null, null, null, null, null, null, new Callback<List<Tweet>>() {
-//            @Override
-//            public void success(Result<List<Tweet>> result) {
-//                if (result.data != null) {
-//                    // write to realm database
-//                    List<TweetData> tweetDataList = Converter.toTweetDataList(result.data);
-//                    tweetDAO.saveTweet(tweetDataList);
-//                    activity.setHomeTimelineList(tweetDataList);
-//                }
-//                activity.hidePullToRefresh();
-//            }
-//
-//            @Override
-//            public void failure(TwitterException e) {
-//                Log.i("Birdhouse", "Failed " + e.getMessage());
-//                activity.hidePullToRefresh();
-//            }
-//        });
-//    }
 
 }

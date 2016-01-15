@@ -1,7 +1,7 @@
 package com.bd.database;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
+import android.support.annotation.NonNull;
 import io.realm.Realm;
 
 import java.util.List;
@@ -14,12 +14,12 @@ public class TweetDAO {
         realm = Realm.getInstance(context);
     }
 
-    @Nullable
+    @NonNull
     public List<TweetData> getAllTweets(){
         return realm.where(TweetData.class).findAll();
     }
 
-    public void saveTweet(final List<TweetData> tweetDataList){
+    public void saveTweet(@NonNull  final List<TweetData> tweetDataList){
         Realm.getInstance(context).executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
