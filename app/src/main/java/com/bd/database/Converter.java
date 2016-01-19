@@ -2,7 +2,9 @@ package com.bd.database;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import com.twitter.sdk.android.core.models.MediaEntity;
 import com.twitter.sdk.android.core.models.Tweet;
+import com.twitter.sdk.android.core.models.TweetEntities;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -28,6 +30,15 @@ public class Converter {
         tweetData.setFullName(tweet.user.name);
         tweetData.setNickName("@" + tweet.user.screenName);
         tweetData.setAvatarUrl(tweet.user.profileImageUrl);
+
+        TweetEntities tweetEntities = tweet.entities;
+        List<MediaEntity> mediaList = tweetEntities.media;
+        if (mediaList != null) {
+            if (!mediaList.isEmpty()) {
+                tweetData.setTweetImageUrl(mediaList.get(0).mediaUrl);
+            }
+        }
+
         return tweetData;
     }
 

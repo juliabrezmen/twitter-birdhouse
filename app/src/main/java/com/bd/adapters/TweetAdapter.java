@@ -46,9 +46,17 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
         initFavoriteView(viewHolder, tweet);
         initRetweetView(viewHolder, tweet);
 
-        String imageUrl = UrlUtils.createOriginImageUrl(tweet.getAvatarUrl());
-        if (!TextUtils.isEmpty(imageUrl)) {
-            Picasso.with(context).load(imageUrl).transform(new CircleTransform()).into(viewHolder.imgAvatar);
+        String avatarUrl = UrlUtils.createOriginImageUrl(tweet.getAvatarUrl());
+        if (!TextUtils.isEmpty(avatarUrl)) {
+            Picasso.with(context).load(avatarUrl).transform(new CircleTransform()).into(viewHolder.imgAvatar);
+        }
+
+        String tweetImageUrl = tweet.getTweetImageUrl();
+        if (tweetImageUrl != null) {
+            viewHolder.imgTweet.setVisibility(View.VISIBLE);
+            Picasso.with(context).load(tweetImageUrl).into(viewHolder.imgTweet);
+        } else {
+            viewHolder.imgTweet.setVisibility(View.GONE);
         }
     }
 
@@ -93,6 +101,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
         ImageView imgAvatar;
         ImageView imgRetweeted;
         ImageView imgFavorited;
+        ImageView imgTweet;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -105,6 +114,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
             imgAvatar = (ImageView) itemView.findViewById(R.id.img_avatar);
             imgRetweeted = (ImageView) itemView.findViewById(R.id.img_retweeted);
             imgFavorited = (ImageView) itemView.findViewById(R.id.img_favorited);
+            imgTweet = (ImageView) itemView.findViewById(R.id.img_tweet);
         }
     }
 

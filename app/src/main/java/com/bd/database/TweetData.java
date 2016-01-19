@@ -15,6 +15,15 @@ public class TweetData extends RealmObject {
     private String fullName;
     private String nickName;
     private String avatarUrl;
+    private String tweetImageUrl;
+
+    public String getTweetImageUrl() {
+        return tweetImageUrl;
+    }
+
+    public void setTweetImageUrl(String tweetImageUrl) {
+        this.tweetImageUrl = tweetImageUrl;
+    }
 
     public String getText() {
         return text;

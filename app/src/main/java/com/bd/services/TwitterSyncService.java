@@ -58,6 +58,20 @@ public class TwitterSyncService extends Service {
             public void success(Result<List<Tweet>> result) {
                 if (result.data != null) {
                     TweetDAO tweetDAO = new TweetDAO(getApplicationContext());
+
+                    //test image in tweet
+//                    Tweet tw = result.data.get(4);
+//                    TweetEntities tweetEntities = tw.entities;
+//                    List<MediaEntity> mediaList = tweetEntities.media;
+//                    MediaEntity mediaEntity;
+//                    if (!mediaList.isEmpty()) {
+//                        mediaEntity = mediaList.get(0);
+//                        String mediaUrl = mediaEntity.mediaUrl;
+//                        Log.v("Media URL", mediaUrl);
+//                    }
+
+                    //end
+
                     tweetDAO.saveTweet(Converter.toTweetDataList(result.data));
                     TimelineUpdateBroadcast.send(getApplicationContext());
                 }

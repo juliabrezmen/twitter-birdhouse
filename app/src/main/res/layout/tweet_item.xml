@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              xmlns:tools="http://schemas.android.com/tools"
               android:orientation="horizontal"
-              android:paddingTop="@dimen/activity_vertical_margin"
-              android:paddingBottom="@dimen/activity_vertical_margin">
+              android:paddingBottom="@dimen/activity_vertical_margin"
+              android:paddingTop="@dimen/activity_vertical_margin">
 
-    <ImageView android:id="@+id/img_avatar"
-        android:layout_marginLeft="16dp"
+    <ImageView
+        android:id="@+id/img_avatar"
         android:layout_width="46dp"
         android:layout_height="46dp"
-        android:background="@drawable/avatar"
-        android:layout_marginRight="16dp"/>
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:background="@drawable/avatar"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -20,33 +21,33 @@
         android:orientation="vertical">
 
         <LinearLayout
-            android:layout_marginRight="16dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginRight="16dp"
             android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/txt_full_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="16sp"
-                tools:text="@string/txt_medium"
-                android:maxEms="7"
                 android:ellipsize="end"
+                android:maxEms="7"
                 android:singleLine="true"
-                android:textColor="@color/white"/>
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                tools:text="@string/txt_medium"/>
 
             <TextView
                 android:id="@+id/txt_nick_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:text="@string/txt_medium"
-                android:maxEms="7"
                 android:ellipsize="end"
-                android:singleLine="true"
-                android:textSize="14sp"
+                android:maxEms="7"
                 android:paddingLeft="4dp"
-                android:textColor="@color/gray_600"/>
+                android:singleLine="true"
+                android:textColor="@color/gray_600"
+                android:textSize="14sp"
+                tools:text="@string/txt_medium"/>
 
             <TextView
                 android:id="@+id/txt_createdAt"
@@ -54,32 +55,42 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="end"
+                android:textColor="@color/gray_400"
                 android:textSize="14sp"
-                tools:text="@string/test_data"
-                android:textColor="@color/gray_400"/>
+                tools:text="@string/test_data"/>
         </LinearLayout>
 
 
         <TextView
-            android:paddingTop="2dp"
-            android:layout_marginRight="16dp"
             android:id="@+id/txt_tweet_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginRight="16dp"
+            android:paddingTop="2dp"
+            android:textColor="@color/gray_200"
             android:textSize="14sp"
-            tools:text="@string/txt_long"
-            android:textColor="@color/gray_200"/>
+            tools:text="@string/txt_long"/>
 
+        <ImageView
+            android:id="@+id/img_tweet"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="6dp"
+            android:scaleType="centerCrop"
+            android:visibility="gone"
+            tools:background="#666666"
+            tools:visibility="visible"/>
 
         <LinearLayout
-            android:paddingTop="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
             android:paddingBottom="8dp"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
+            android:paddingTop="8dp">
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -87,43 +98,47 @@
                 android:src="@drawable/ic_comment_gray"/>
 
             <Space
-                android:layout_weight="1"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:layout_weight="1"/>
 
-            <ImageView android:id="@+id/img_retweeted"
+            <ImageView
+                android:id="@+id/img_retweeted"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_retweet_gray"/>
 
-            <TextView android:id="@+id/txt_retweet_count"
-                android:layout_gravity="center_vertical"
+            <TextView
+                android:id="@+id/txt_retweet_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="14sp"
+                android:layout_gravity="center_vertical"
                 android:paddingLeft="2dp"
                 android:paddingRight="2dp"
-                tools:text="12"
-                android:textColor="@color/gray_600"/>
+                android:textColor="@color/gray_600"
+                android:textSize="14sp"
+                tools:text="12"/>
 
             <Space
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"/>
 
-            <ImageView android:id="@+id/img_favorited"
+            <ImageView
+                android:id="@+id/img_favorited"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_heart_gray"/>
 
-            <TextView android:id="@+id/txt_favourite_count"
-                android:paddingLeft="4dp"
-                android:paddingRight="4dp"
+            <TextView
+                android:id="@+id/txt_favourite_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:paddingLeft="4dp"
+                android:paddingRight="4dp"
+                android:textColor="@color/gray_600"
                 android:textSize="14sp"
-                tools:text="3"
-                android:textColor="@color/gray_600"/>
+                tools:text="3"/>
         </LinearLayout>
 
         <View

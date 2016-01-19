@@ -29,6 +29,7 @@ public class HomePresenter {
                 @Override
                 public void onTimelineUpdated() {
                     loadTweetsFromDatabase();
+                    activity.hidePullToRefresh();
                 }
             });
             loadTweetsFromDatabase();
@@ -40,8 +41,7 @@ public class HomePresenter {
     }
 
     public void onPullToRefresh() {
-        loadTweetsFromDatabase();
-        activity.hidePullToRefresh();
+        TwitterSyncService.start(activity.getApplicationContext(), Action.LOAD_TWEETS);
     }
 
 
