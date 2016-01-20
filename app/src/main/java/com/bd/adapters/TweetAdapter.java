@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.bd.R;
 import com.bd.database.TagData;
 import com.bd.database.TweetData;
+import com.bd.database.UserMentionData;
 import com.bd.imageloader.CircleTransform;
 import com.bd.utils.DateUtils;
 import com.bd.utils.L;
@@ -28,11 +29,13 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
     private List<TweetData> tweetDataList;
     private Context context;
     private int hashTagColor;
+    private int userMentionsColor;
 
     public TweetAdapter(Context context) {
         this.tweetDataList = new ArrayList<>();
         this.context = context;
         this.hashTagColor = context.getResources().getColor(R.color.blue);
+        this.userMentionsColor = context.getResources().getColor(R.color.orange);
     }
 
     @Override
@@ -51,7 +54,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
         String tweetText = tweet.getText();
         Spannable spannable = new SpannableStringBuilder(tweetText);
         highlightTags(tweet, spannable);
-        //highlightUsers()
+        highlightUsers(tweet, spannable);
         viewHolder.txtTweetText.setText(spannable);
 
         viewHolder.txtFavouriteCount.setText(String.valueOf(tweet.getFavoriteCount()));
@@ -65,6 +68,10 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
             Picasso.with(context).load(avatarUrl).transform(new CircleTransform()).into(viewHolder.imgAvatar);
         }
 
+        initTweetImage(viewHolder, tweet);
+    }
+
+    private void initTweetImage(ViewHolder viewHolder, TweetData tweet) {
         String tweetImageUrl = tweet.getTweetImageUrl();
         if (tweetImageUrl != null) {
             viewHolder.imgTweet.setVisibility(View.VISIBLE);
@@ -74,11 +81,20 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
         }
     }
 
+    private void highlightUsers(TweetData tweet, Spannable spannable) {
+        RealmList<UserMentionData> userMentionList = tweet.getUserMentionList();
+        if (userMentionList != null && !userMentionList.isEmpty()) {
+            for (UserMentionData user : userMentionList) {
+                L.i("Name: " + user.getScreenName());
+                SpannableUtils.color(spannable, "@" + user.getScreenName(), userMentionsColor);
+            }
+        }
+    }
+
     private void highlightTags(TweetData tweet, Spannable spannable) {
         RealmList<TagData> hashtagList = tweet.getHashtagList();
         if (hashtagList != null && !hashtagList.isEmpty()) {
             for (TagData tagData : hashtagList) {
-                L.i("TAG: " + tagData.getTag());
                 SpannableUtils.color(spannable, "#" + tagData.getTag(), hashTagColor);
             }
         }

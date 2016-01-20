@@ -2,10 +2,7 @@ package com.bd.database;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import com.twitter.sdk.android.core.models.HashtagEntity;
-import com.twitter.sdk.android.core.models.MediaEntity;
-import com.twitter.sdk.android.core.models.Tweet;
-import com.twitter.sdk.android.core.models.TweetEntities;
+import com.twitter.sdk.android.core.models.*;
 import io.realm.RealmList;
 
 import java.text.ParseException;
@@ -44,8 +41,21 @@ public class Converter {
         }
 
         setTagList(tweetData, tweetEntities);
+        setUserMentions(tweetData, tweetEntities);
 
         return tweetData;
+    }
+
+    private static void setUserMentions(TweetData tweetData, TweetEntities tweetEntities) {
+        List<MentionEntity> userMentionsList = tweetEntities.userMentions;
+        RealmList<UserMentionData> userMentionDataList = new RealmList<>();
+        UserMentionData userData;
+        for (MentionEntity user : userMentionsList) {
+            userData = new UserMentionData();
+            userData.setScreenName(user.screenName);
+            userMentionDataList.add(userData);
+        }
+        tweetData.setUserMentionList(userMentionDataList);
     }
 
     private static void setTagList(TweetData tweetData, TweetEntities tweetEntities) {
