@@ -60,8 +60,14 @@ public class TwitterSyncService extends Service {
                     TweetDAO tweetDAO = new TweetDAO(getApplicationContext());
 
                     //test image in tweet
-//                    Tweet tw = result.data.get(4);
+//                    Tweet tw = result.data.get(0);
 //                    TweetEntities tweetEntities = tw.entities;
+//                    if (tweetEntities != null) {
+//                        List<HashtagEntity> hashtags = tweetEntities.hashtags;
+//                        for (HashtagEntity h:hashtags){
+//                            L.i("HASHTAG "+ h.text+" "+h.getStart());
+//                        }
+//                    }
 //                    List<MediaEntity> mediaList = tweetEntities.media;
 //                    MediaEntity mediaEntity;
 //                    if (!mediaList.isEmpty()) {

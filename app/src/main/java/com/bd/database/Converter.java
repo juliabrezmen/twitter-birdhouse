@@ -2,9 +2,11 @@ package com.bd.database;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import com.twitter.sdk.android.core.models.HashtagEntity;
 import com.twitter.sdk.android.core.models.MediaEntity;
 import com.twitter.sdk.android.core.models.Tweet;
 import com.twitter.sdk.android.core.models.TweetEntities;
+import io.realm.RealmList;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -32,6 +34,8 @@ public class Converter {
         tweetData.setAvatarUrl(tweet.user.profileImageUrl);
 
         TweetEntities tweetEntities = tweet.entities;
+
+        //TODO: method setTweetImgUrl()
         List<MediaEntity> mediaList = tweetEntities.media;
         if (mediaList != null) {
             if (!mediaList.isEmpty()) {
@@ -39,7 +43,21 @@ public class Converter {
             }
         }
 
+        setTagList(tweetData, tweetEntities);
+
         return tweetData;
+    }
+
+    private static void setTagList(TweetData tweetData, TweetEntities tweetEntities) {
+        List<HashtagEntity> hashtags = tweetEntities.hashtags;
+        RealmList<TagData> tagDataList = new RealmList<>();
+        TagData tag;
+        for (HashtagEntity hashtag : hashtags) {
+            tag = new TagData();
+            tag.setTag(hashtag.text);
+            tagDataList.add(tag);
+        }
+        tweetData.setHashtagList(tagDataList);
     }
 
     @Nullable

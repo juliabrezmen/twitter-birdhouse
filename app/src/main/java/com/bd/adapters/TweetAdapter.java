@@ -2,6 +2,8 @@ package com.bd.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,11 +11,15 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.bd.R;
+import com.bd.database.TagData;
 import com.bd.database.TweetData;
 import com.bd.imageloader.CircleTransform;
 import com.bd.utils.DateUtils;
+import com.bd.utils.L;
+import com.bd.utils.SpannableUtils;
 import com.bd.utils.UrlUtils;
 import com.squareup.picasso.Picasso;
+import io.realm.RealmList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,10 +27,12 @@ import java.util.List;
 public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> {
     private List<TweetData> tweetDataList;
     private Context context;
+    private int hashTagColor;
 
     public TweetAdapter(Context context) {
         this.tweetDataList = new ArrayList<>();
         this.context = context;
+        this.hashTagColor = context.getResources().getColor(R.color.blue);
     }
 
     @Override
@@ -39,7 +47,13 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
 
         viewHolder.txtFullName.setText(tweet.getFullName());
         viewHolder.txtNickName.setText(tweet.getNickName());
-        viewHolder.txtTweetText.setText(tweet.getText());
+
+        String tweetText = tweet.getText();
+        Spannable spannable = new SpannableStringBuilder(tweetText);
+        highlightTags(tweet, spannable);
+        //highlightUsers()
+        viewHolder.txtTweetText.setText(spannable);
+
         viewHolder.txtFavouriteCount.setText(String.valueOf(tweet.getFavoriteCount()));
         viewHolder.txtRetweetCount.setText(String.valueOf(tweet.getRetweetCount()));
         viewHolder.txtCreatedAt.setText(DateUtils.createShortDate(tweet.getDate()));
@@ -57,6 +71,16 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
             Picasso.with(context).load(tweetImageUrl).into(viewHolder.imgTweet);
         } else {
             viewHolder.imgTweet.setVisibility(View.GONE);
+        }
+    }
+
+    private void highlightTags(TweetData tweet, Spannable spannable) {
+        RealmList<TagData> hashtagList = tweet.getHashtagList();
+        if (hashtagList != null && !hashtagList.isEmpty()) {
+            for (TagData tagData : hashtagList) {
+                L.i("TAG: " + tagData.getTag());
+                SpannableUtils.color(spannable, "#" + tagData.getTag(), hashTagColor);
+            }
         }
     }
 

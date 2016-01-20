@@ -1,5 +1,6 @@
 package com.bd.database;
 
+import io.realm.RealmList;
 import io.realm.RealmObject;
 
 import java.util.Date;
@@ -16,6 +17,15 @@ public class TweetData extends RealmObject {
     private String nickName;
     private String avatarUrl;
     private String tweetImageUrl;
+    private RealmList<TagData> hashtagList;
+
+    public RealmList<TagData> getHashtagList() {
+        return hashtagList;
+    }
+
+    public void setHashtagList(RealmList<TagData> hashtagList) {
+        this.hashtagList = hashtagList;
+    }
 
     public String getTweetImageUrl() {
         return tweetImageUrl;
