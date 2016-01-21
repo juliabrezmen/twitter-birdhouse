@@ -17,22 +17,22 @@ public class TweetData extends RealmObject {
     private String nickName;
     private String avatarUrl;
     private String tweetImageUrl;
-    private RealmList<TagData> hashtagList;
-    private RealmList<UserMentionData> userMentionList;
+    private RealmList<RealmString> hashtagList;
+    private RealmList<RealmString> userMentionsList;
 
-    public RealmList<UserMentionData> getUserMentionList() {
-        return userMentionList;
+    public RealmList<RealmString> getUserMentionsList() {
+        return userMentionsList;
     }
 
-    public void setUserMentionList(RealmList<UserMentionData> userMentionList) {
-        this.userMentionList = userMentionList;
+    public void setUserMentionsList(RealmList<RealmString> userMentionsList) {
+        this.userMentionsList = userMentionsList;
     }
 
-    public RealmList<TagData> getHashtagList() {
+    public RealmList<RealmString> getHashtagList() {
         return hashtagList;
     }
 
-    public void setHashtagList(RealmList<TagData> hashtagList) {
+    public void setHashtagList(RealmList<RealmString> hashtagList) {
         this.hashtagList = hashtagList;
     }
 

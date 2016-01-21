@@ -11,12 +11,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.bd.R;
-import com.bd.database.TagData;
+import com.bd.database.RealmString;
 import com.bd.database.TweetData;
-import com.bd.database.UserMentionData;
 import com.bd.imageloader.CircleTransform;
 import com.bd.utils.DateUtils;
-import com.bd.utils.L;
 import com.bd.utils.SpannableUtils;
 import com.bd.utils.UrlUtils;
 import com.squareup.picasso.Picasso;
@@ -82,20 +80,19 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
     }
 
     private void highlightUsers(TweetData tweet, Spannable spannable) {
-        RealmList<UserMentionData> userMentionList = tweet.getUserMentionList();
+        RealmList<RealmString> userMentionList = tweet.getUserMentionsList();
         if (userMentionList != null && !userMentionList.isEmpty()) {
-            for (UserMentionData user : userMentionList) {
-                L.i("Name: " + user.getScreenName());
-                SpannableUtils.color(spannable, "@" + user.getScreenName(), userMentionsColor);
+            for (RealmString user : userMentionList) {
+                SpannableUtils.color(spannable, "@" + user.getString(), userMentionsColor);
             }
         }
     }
 
     private void highlightTags(TweetData tweet, Spannable spannable) {
-        RealmList<TagData> hashtagList = tweet.getHashtagList();
+        RealmList<RealmString> hashtagList = tweet.getHashtagList();
         if (hashtagList != null && !hashtagList.isEmpty()) {
-            for (TagData tagData : hashtagList) {
-                SpannableUtils.color(spannable, "#" + tagData.getTag(), hashTagColor);
+            for (RealmString tagData : hashtagList) {
+                SpannableUtils.color(spannable, "#" + tagData.getString(), hashTagColor);
             }
         }
     }

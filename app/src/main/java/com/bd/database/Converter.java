@@ -48,23 +48,23 @@ public class Converter {
 
     private static void setUserMentions(TweetData tweetData, TweetEntities tweetEntities) {
         List<MentionEntity> userMentionsList = tweetEntities.userMentions;
-        RealmList<UserMentionData> userMentionDataList = new RealmList<>();
-        UserMentionData userData;
+        RealmList<RealmString> userMentionDataList = new RealmList<>();
+        RealmString userData;
         for (MentionEntity user : userMentionsList) {
-            userData = new UserMentionData();
-            userData.setScreenName(user.screenName);
+            userData = new RealmString();
+            userData.setString(user.screenName);
             userMentionDataList.add(userData);
         }
-        tweetData.setUserMentionList(userMentionDataList);
+        tweetData.setUserMentionsList(userMentionDataList);
     }
 
     private static void setTagList(TweetData tweetData, TweetEntities tweetEntities) {
         List<HashtagEntity> hashtags = tweetEntities.hashtags;
-        RealmList<TagData> tagDataList = new RealmList<>();
-        TagData tag;
+        RealmList<RealmString> tagDataList = new RealmList<>();
+        RealmString tag;
         for (HashtagEntity hashtag : hashtags) {
-            tag = new TagData();
-            tag.setTag(hashtag.text);
+            tag = new RealmString();
+            tag.setString(hashtag.text);
             tagDataList.add(tag);
         }
         tweetData.setHashtagList(tagDataList);
