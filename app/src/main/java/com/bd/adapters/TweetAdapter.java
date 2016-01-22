@@ -28,12 +28,14 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
     private Context context;
     private int hashTagColor;
     private int userMentionsColor;
+    private int urlColor;
 
     public TweetAdapter(Context context) {
         this.tweetDataList = new ArrayList<>();
         this.context = context;
         this.hashTagColor = context.getResources().getColor(R.color.blue);
         this.userMentionsColor = context.getResources().getColor(R.color.orange);
+        this.urlColor = context.getResources().getColor(R.color.blue);
     }
 
     @Override
@@ -53,6 +55,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
         Spannable spannable = new SpannableStringBuilder(tweetText);
         highlightTags(tweet, spannable);
         highlightUsers(tweet, spannable);
+        highlightUrls(tweet, spannable);
         viewHolder.txtTweetText.setText(spannable);
 
         viewHolder.txtFavouriteCount.setText(String.valueOf(tweet.getFavoriteCount()));
@@ -76,6 +79,15 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
             Picasso.with(context).load(tweetImageUrl).into(viewHolder.imgTweet);
         } else {
             viewHolder.imgTweet.setVisibility(View.GONE);
+        }
+    }
+
+    private void highlightUrls(TweetData tweet, Spannable spannable) {
+        RealmList<RealmString> urlList = tweet.getUrlList();
+        if(urlList != null && !urlList.isEmpty()){
+            for (RealmString url : urlList) {
+                SpannableUtils.color(spannable,url.getString(), urlColor);
+            }
         }
     }
 

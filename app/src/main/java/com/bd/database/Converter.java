@@ -41,12 +41,25 @@ public class Converter {
         }
 
         setTagList(tweetData, tweetEntities);
-        setUserMentions(tweetData, tweetEntities);
+        setUserMentionsList(tweetData, tweetEntities);
+        setUrlList(tweetData,tweetEntities);
 
         return tweetData;
     }
 
-    private static void setUserMentions(TweetData tweetData, TweetEntities tweetEntities) {
+    private static void setUrlList(TweetData tweetData, TweetEntities tweetEntities){
+        List<UrlEntity> urlEntityList = tweetEntities.urls;
+        RealmList<RealmString> urlDataList = new RealmList<>();
+        RealmString url;
+        for (UrlEntity urlEntity : urlEntityList) {
+            url = new RealmString();
+            url.setString(urlEntity.url);
+            urlDataList.add(url);
+        }
+        tweetData.setUrlList(urlDataList);
+    }
+
+    private static void setUserMentionsList(TweetData tweetData, TweetEntities tweetEntities) {
         List<MentionEntity> userMentionsList = tweetEntities.userMentions;
         RealmList<RealmString> userMentionDataList = new RealmList<>();
         RealmString userData;

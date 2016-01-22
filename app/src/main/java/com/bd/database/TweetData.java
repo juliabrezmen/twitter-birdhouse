@@ -19,6 +19,15 @@ public class TweetData extends RealmObject {
     private String tweetImageUrl;
     private RealmList<RealmString> hashtagList;
     private RealmList<RealmString> userMentionsList;
+    private RealmList<RealmString> urlList;
+
+    public RealmList<RealmString> getUrlList() {
+        return urlList;
+    }
+
+    public void setUrlList(RealmList<RealmString> urlList) {
+        this.urlList = urlList;
+    }
 
     public RealmList<RealmString> getUserMentionsList() {
         return userMentionsList;
