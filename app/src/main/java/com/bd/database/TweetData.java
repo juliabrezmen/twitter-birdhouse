@@ -2,11 +2,14 @@ package com.bd.database;
 
 import io.realm.RealmList;
 import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 import java.util.Date;
 
 public class TweetData extends RealmObject {
 
+    @PrimaryKey
+    private long id;
     private String text;
     private int favoriteCount;
     private int retweetCount;
@@ -20,6 +23,32 @@ public class TweetData extends RealmObject {
     private RealmList<RealmString> hashtagList;
     private RealmList<RealmString> userMentionsList;
     private RealmList<RealmString> urlList;
+    private boolean isFavouriteModified;
+    private boolean isRetweetModified;
+
+    public boolean isFavouriteModified() {
+        return isFavouriteModified;
+    }
+
+    public void setFavouriteModified(boolean favouriteModified) {
+        isFavouriteModified = favouriteModified;
+    }
+
+    public boolean isRetweetModified() {
+        return isRetweetModified;
+    }
+
+    public void setRetweetModified(boolean retweetModified) {
+        isRetweetModified = retweetModified;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 
     public RealmList<RealmString> getUrlList() {
         return urlList;

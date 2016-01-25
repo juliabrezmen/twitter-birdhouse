@@ -106,7 +106,8 @@
                 android:id="@+id/img_retweeted"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_retweet_gray"/>
+                android:src="@drawable/ic_retweet_gray"
+                android:clickable="true"/>
 
             <TextView
                 android:id="@+id/txt_retweet_count"
@@ -128,7 +129,8 @@
                 android:id="@+id/img_favorited"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_heart_gray"/>
+                android:src="@drawable/ic_heart_gray"
+                android:clickable="true"/>
 
             <TextView
                 android:id="@+id/txt_favourite_count"

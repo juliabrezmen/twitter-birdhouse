@@ -17,8 +17,9 @@ public class Converter {
     private static final SimpleDateFormat TWEET_DATE_FORMATTER = new SimpleDateFormat("EEE MMM dd HH:mm:ss ZZZZZ yyyy", Locale.getDefault());
 
     @NonNull
-    private static TweetData toTweetData(@NonNull Tweet tweet) {
+    public static TweetData toTweetData(@NonNull Tweet tweet) {
         TweetData tweetData = new TweetData();
+        tweetData.setId(tweet.id);
         tweetData.setText(tweet.text);
         tweetData.setFavoriteCount(tweet.favoriteCount);
         tweetData.setRetweetCount(tweet.retweetCount);
@@ -42,12 +43,12 @@ public class Converter {
 
         setTagList(tweetData, tweetEntities);
         setUserMentionsList(tweetData, tweetEntities);
-        setUrlList(tweetData,tweetEntities);
+        setUrlList(tweetData, tweetEntities);
 
         return tweetData;
     }
 
-    private static void setUrlList(TweetData tweetData, TweetEntities tweetEntities){
+    private static void setUrlList(TweetData tweetData, TweetEntities tweetEntities) {
         List<UrlEntity> urlEntityList = tweetEntities.urls;
         RealmList<RealmString> urlDataList = new RealmList<>();
         RealmString url;

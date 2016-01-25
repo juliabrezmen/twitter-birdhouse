@@ -16,4 +16,8 @@ public class L {
     public static void v(String message, Object...args) {
         Log.v(TAG, String.format(message, args));
     }
+
+    public static void w(String msg, Throwable t) {
+        Log.w(TAG, msg, t);
+    }
 }

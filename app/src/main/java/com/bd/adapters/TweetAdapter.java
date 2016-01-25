@@ -29,10 +29,12 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
     private int hashTagColor;
     private int userMentionsColor;
     private int urlColor;
+    private Listener listener;
 
-    public TweetAdapter(Context context) {
+    public TweetAdapter(Context context, Listener listener) {
         this.tweetDataList = new ArrayList<>();
         this.context = context;
+        this.listener = listener;
         this.hashTagColor = context.getResources().getColor(R.color.blue);
         this.userMentionsColor = context.getResources().getColor(R.color.orange);
         this.urlColor = context.getResources().getColor(R.color.blue);
@@ -61,15 +63,18 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
         viewHolder.txtFavouriteCount.setText(String.valueOf(tweet.getFavoriteCount()));
         viewHolder.txtRetweetCount.setText(String.valueOf(tweet.getRetweetCount()));
         viewHolder.txtCreatedAt.setText(DateUtils.createShortDate(tweet.getDate()));
+
         initFavoriteView(viewHolder, tweet);
         initRetweetView(viewHolder, tweet);
+        initAvatarView(viewHolder, tweet);
+        initTweetImage(viewHolder, tweet);
+    }
 
+    private void initAvatarView(ViewHolder viewHolder, TweetData tweet) {
         String avatarUrl = UrlUtils.createOriginImageUrl(tweet.getAvatarUrl());
         if (!TextUtils.isEmpty(avatarUrl)) {
             Picasso.with(context).load(avatarUrl).transform(new CircleTransform()).into(viewHolder.imgAvatar);
         }
-
-        initTweetImage(viewHolder, tweet);
     }
 
     private void initTweetImage(ViewHolder viewHolder, TweetData tweet) {
@@ -84,9 +89,9 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
 
     private void highlightUrls(TweetData tweet, Spannable spannable) {
         RealmList<RealmString> urlList = tweet.getUrlList();
-        if(urlList != null && !urlList.isEmpty()){
+        if (urlList != null && !urlList.isEmpty()) {
             for (RealmString url : urlList) {
-                SpannableUtils.color(spannable,url.getString(), urlColor);
+                SpannableUtils.color(spannable, url.getString(), urlColor);
             }
         }
     }
@@ -109,7 +114,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
         }
     }
 
-    private void initRetweetView(ViewHolder viewHolder, TweetData tweet) {
+    private void initRetweetView(ViewHolder viewHolder, final TweetData tweet) {
         if (tweet.isRetweeted()) {
             viewHolder.imgRetweeted.setImageResource(R.drawable.ic_retweet_white);
             viewHolder.txtRetweetCount.setTextColor(context.getResources().getColor(R.color.gray_200));
@@ -117,10 +122,35 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
             viewHolder.imgRetweeted.setImageResource(R.drawable.ic_retweet_gray);
             viewHolder.txtRetweetCount.setTextColor(context.getResources().getColor(R.color.gray_600));
         }
+        viewHolder.imgRetweeted.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onRetweetClicked(tweet);
+            }
+        });
     }
 
-    private void initFavoriteView(ViewHolder viewHolder, TweetData tweet) {
-        if (tweet.isFavorited()) {
+    private void initFavoriteView(final ViewHolder viewHolder, final TweetData tweet) {
+        setFavourite(viewHolder, tweet.isFavorited());
+        viewHolder.imgFavorited.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setFavourite(viewHolder, !tweet.isFavorited());
+
+                int count = Integer.parseInt(viewHolder.txtFavouriteCount.getText().toString());
+                if (tweet.isFavorited()) {
+                    viewHolder.txtFavouriteCount.setText(String.valueOf(count - 1));
+                } else {
+                    viewHolder.txtFavouriteCount.setText(String.valueOf(count + 1));
+                }
+
+                listener.onFavouriteClicked(tweet);
+            }
+        });
+    }
+
+    private void setFavourite(ViewHolder viewHolder, boolean isFavorited) {
+        if (isFavorited) {
             viewHolder.imgFavorited.setImageResource(R.drawable.ic_heart_red);
             viewHolder.txtFavouriteCount.setTextColor(context.getResources().getColor(R.color.red));
         } else {
@@ -138,6 +168,12 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
         if (tweetDataList != null) {
             this.tweetDataList = tweetList;
         }
+    }
+
+    public interface Listener {
+        void onFavouriteClicked(TweetData tweet);
+
+        void onRetweetClicked(TweetData tweet);
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {

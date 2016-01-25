@@ -1,5 +1,5 @@
 package com.bd.services;
 
 public enum Action {
-    LOAD_TWEETS
+    GET_TWEETS, POST_TWEETS
 }

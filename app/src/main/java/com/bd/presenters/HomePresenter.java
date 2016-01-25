@@ -7,14 +7,14 @@ import com.bd.services.Action;
 import com.bd.services.TwitterSyncService;
 import com.bd.ui.HomeActivity;
 import com.bd.ui.LoginActivity;
-import com.bd.utils.L;
 import com.twitter.sdk.android.Twitter;
+import io.realm.Realm;
 
 import java.util.List;
 
 public class HomePresenter {
+    private Realm realm = Realm.getDefaultInstance();
     private HomeActivity activity;
-    private TweetDAO tweetDAO;
     private TimelineUpdateBroadcast timelineUpdateBroadcast;
 
     public HomePresenter(HomeActivity activity) {
@@ -23,7 +23,6 @@ public class HomePresenter {
 
     public void initPresenter() {
         if (isUserSignedIn()) {
-            tweetDAO = new TweetDAO(activity.getApplicationContext());
             timelineUpdateBroadcast = new TimelineUpdateBroadcast(activity.getApplicationContext());
             timelineUpdateBroadcast.register(new TimelineUpdateBroadcast.Listener() {
                 @Override
@@ -33,7 +32,8 @@ public class HomePresenter {
                 }
             });
             loadTweetsFromDatabase();
-            TwitterSyncService.start(activity.getApplicationContext(), Action.LOAD_TWEETS);
+            TwitterSyncService.start(activity.getApplicationContext(), Action.POST_TWEETS);
+            TwitterSyncService.start(activity.getApplicationContext(), Action.GET_TWEETS);
         } else {
             LoginActivity.start(activity);
             activity.finish();
@@ -41,16 +41,28 @@ public class HomePresenter {
     }
 
     public void onPullToRefresh() {
-        TwitterSyncService.start(activity.getApplicationContext(), Action.LOAD_TWEETS);
+        TwitterSyncService.start(activity.getApplicationContext(), Action.POST_TWEETS);
+        TwitterSyncService.start(activity.getApplicationContext(), Action.GET_TWEETS);
     }
 
+    public void onFavouriteClicked(TweetData tweet) {
+        if (tweet.isFavorited()) {
+            TweetDAO.newInstance().updateTweetFavourite(tweet.getId(), false, tweet.getFavoriteCount() - 1);
+        } else {
+            TweetDAO.newInstance().updateTweetFavourite(tweet.getId(), true, tweet.getFavoriteCount() + 1);
+        }
+        TwitterSyncService.start(activity.getApplicationContext(), Action.POST_TWEETS);
+    }
+
+    public void onRetweetClicked(TweetData tweet) {
+    }
 
     public void onActivityDestroy() {
-        if(timelineUpdateBroadcast != null) {
+        if (timelineUpdateBroadcast != null) {
             timelineUpdateBroadcast.unregister();
         }
-        if (tweetDAO != null) {
-            tweetDAO.close();
+        if (realm != null) {
+            realm.close();
         }
     }
 
@@ -59,8 +71,7 @@ public class HomePresenter {
     }
 
     private void loadTweetsFromDatabase() {
-        List<TweetData> results = tweetDAO.getAllTweets();
-        L.v("Load tweets from database: %d", results.size());
+        List<TweetData> results = TweetDAO.newInstance().getAllTweets(realm);
         activity.setHomeTimelineList(results);
     }
 

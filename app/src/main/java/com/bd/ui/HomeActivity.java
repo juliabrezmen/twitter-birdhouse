@@ -39,7 +39,17 @@ public class HomeActivity extends Activity {
     private void initView() {
         setContentView(R.layout.home_layout);
 
-        tweetAdapter = new TweetAdapter(getApplicationContext());
+        tweetAdapter = new TweetAdapter(getApplicationContext(), new TweetAdapter.Listener() {
+            @Override
+            public void onFavouriteClicked(TweetData tweet) {
+                homePresenter.onFavouriteClicked(tweet);
+            }
+
+            @Override
+            public void onRetweetClicked(TweetData tweet) {
+                homePresenter.onRetweetClicked(tweet);
+            }
+        });
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
