@@ -18,8 +18,27 @@ public class Converter {
 
     @NonNull
     public static TweetData toTweetData(@NonNull Tweet tweet) {
-        TweetData tweetData = new TweetData();
+        TweetData parentTweetData = new TweetData();
+        copyValues(tweet, parentTweetData);
+
+
+        Tweet originTweet = tweet.retweetedStatus;
+        if (originTweet != null) {
+            TweetData originTweetData = new TweetData();
+            copyValues(originTweet, originTweetData);
+            originTweetData.setOriginId(tweet.retweetedStatus.id);
+            originTweetData.setStringId(tweet.idStr + tweet.retweetedStatus.idStr);
+
+            parentTweetData.setOriginTweet(originTweetData);
+        }
+
+
+        return parentTweetData;
+    }
+
+    private static void copyValues(@NonNull Tweet tweet, TweetData tweetData) {
         tweetData.setId(tweet.id);
+        tweetData.setStringId(String.valueOf(tweet.id));
         tweetData.setText(tweet.text);
         tweetData.setFavoriteCount(tweet.favoriteCount);
         tweetData.setRetweetCount(tweet.retweetCount);
@@ -32,20 +51,19 @@ public class Converter {
         tweetData.setAvatarUrl(tweet.user.profileImageUrl);
 
         TweetEntities tweetEntities = tweet.entities;
+        setTweetImgUrl(tweetData, tweetEntities);
+        setTagList(tweetData, tweetEntities);
+        setUserMentionsList(tweetData, tweetEntities);
+        setUrlList(tweetData, tweetEntities);
+    }
 
-        //TODO: method setTweetImgUrl()
+    private static void setTweetImgUrl(TweetData tweetData, TweetEntities tweetEntities) {
         List<MediaEntity> mediaList = tweetEntities.media;
         if (mediaList != null) {
             if (!mediaList.isEmpty()) {
                 tweetData.setTweetImageUrl(mediaList.get(0).mediaUrl);
             }
         }
-
-        setTagList(tweetData, tweetEntities);
-        setUserMentionsList(tweetData, tweetEntities);
-        setUrlList(tweetData, tweetEntities);
-
-        return tweetData;
     }
 
     private static void setUrlList(TweetData tweetData, TweetEntities tweetEntities) {

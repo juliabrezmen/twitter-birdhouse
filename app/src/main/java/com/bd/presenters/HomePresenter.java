@@ -7,6 +7,7 @@ import com.bd.services.Action;
 import com.bd.services.TwitterSyncService;
 import com.bd.ui.HomeActivity;
 import com.bd.ui.LoginActivity;
+import com.bd.utils.L;
 import com.twitter.sdk.android.Twitter;
 import io.realm.Realm;
 
@@ -72,6 +73,7 @@ public class HomePresenter {
 
     private void loadTweetsFromDatabase() {
         List<TweetData> results = TweetDAO.newInstance().getAllTweets(realm);
+        L.v("size: "+results.size());
         activity.setHomeTimelineList(results);
     }
 

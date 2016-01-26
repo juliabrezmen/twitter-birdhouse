@@ -49,7 +49,15 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int position) {
         TweetData tweet = tweetDataList.get(position);
+        TweetData originTweet = tweet.getOriginTweet();
+        if (originTweet != null) {
+            initTweetDetails(viewHolder, originTweet);
+        } else {
+            initTweetDetails(viewHolder, tweet);
+        }
+    }
 
+    private void initTweetDetails(ViewHolder viewHolder, TweetData tweet) {
         viewHolder.txtFullName.setText(tweet.getFullName());
         viewHolder.txtNickName.setText(tweet.getNickName());
 

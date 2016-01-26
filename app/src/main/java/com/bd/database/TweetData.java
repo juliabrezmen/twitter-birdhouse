@@ -9,6 +9,7 @@ import java.util.Date;
 public class TweetData extends RealmObject {
 
     @PrimaryKey
+    private String stringId;
     private long id;
     private String text;
     private int favoriteCount;
@@ -26,6 +27,33 @@ public class TweetData extends RealmObject {
     private boolean isFavouriteModified;
     private boolean isRetweetModified;
 
+    private TweetData originTweet;
+    private long originId;
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public TweetData getOriginTweet() {
+        return originTweet;
+    }
+
+    public void setOriginTweet(TweetData originTweet) {
+        this.originTweet = originTweet;
+    }
+
+    public long getOriginId() {
+        return originId;
+    }
+
+    public void setOriginId(long originId) {
+        this.originId = originId;
+    }
+
     public boolean isFavouriteModified() {
         return isFavouriteModified;
     }
@@ -42,12 +70,12 @@ public class TweetData extends RealmObject {
         isRetweetModified = retweetModified;
     }
 
-    public long getId() {
-        return id;
+    public String getStringId() {
+        return stringId;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public void setStringId(String stringId) {
+        this.stringId = stringId;
     }
 
     public RealmList<RealmString> getUrlList() {
