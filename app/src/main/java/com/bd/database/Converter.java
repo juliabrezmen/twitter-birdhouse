@@ -51,20 +51,23 @@ public class Converter {
         tweetData.setAvatarUrl(tweet.user.profileImageUrl);
 
         TweetEntities tweetEntities = tweet.entities;
-        setTweetImgUrl(tweetData, tweetEntities);
+
+        List<MediaEntity> mediaList = tweetEntities.media;
+        if (mediaList != null) {
+            if (!mediaList.isEmpty()) {
+                MediaEntity mediaEntity = mediaList.get(0);
+                tweetData.setTweetImageUrl(mediaEntity.mediaUrl);
+
+                String text=tweet.text.replace(mediaEntity.url,"");
+                tweetData.setText(text);
+            }
+        }
+
         setTagList(tweetData, tweetEntities);
         setUserMentionsList(tweetData, tweetEntities);
         setUrlList(tweetData, tweetEntities);
     }
 
-    private static void setTweetImgUrl(TweetData tweetData, TweetEntities tweetEntities) {
-        List<MediaEntity> mediaList = tweetEntities.media;
-        if (mediaList != null) {
-            if (!mediaList.isEmpty()) {
-                tweetData.setTweetImageUrl(mediaList.get(0).mediaUrl);
-            }
-        }
-    }
 
     private static void setUrlList(TweetData tweetData, TweetEntities tweetEntities) {
         List<UrlEntity> urlEntityList = tweetEntities.urls;
