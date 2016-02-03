@@ -56,6 +56,12 @@ public class HomePresenter {
     }
 
     public void onRetweetClicked(TweetData tweet) {
+        if (tweet.isRetweeted()) {
+            TweetDAO.newInstance().setRetweeted(tweet.getId(), false, tweet.getRetweetCount() - 1);
+        } else {
+            TweetDAO.newInstance().setRetweeted(tweet.getId(), true, tweet.getRetweetCount() + 1);
+        }
+        TwitterSyncService.start(activity.getApplicationContext(), Action.POST_TWEETS);
     }
 
     public void onActivityDestroy() {
@@ -73,7 +79,7 @@ public class HomePresenter {
 
     private void loadTweetsFromDatabase() {
         List<TweetData> results = TweetDAO.newInstance().getAllTweets(realm);
-        L.v("size: "+results.size());
+        L.v("size: " + results.size());
         activity.setHomeTimelineList(results);
     }
 

@@ -26,7 +26,7 @@ public class Converter {
         if (originTweet != null) {
             TweetData originTweetData = new TweetData();
             copyValues(originTweet, originTweetData);
-            originTweetData.setOriginId(tweet.retweetedStatus.id);
+            originTweetData.setOrigin(true);
             originTweetData.setStringId(tweet.idStr + tweet.retweetedStatus.idStr);
 
             parentTweetData.setOriginTweet(originTweetData);

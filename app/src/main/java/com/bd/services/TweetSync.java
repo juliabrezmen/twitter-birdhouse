@@ -22,6 +22,7 @@ public class TweetSync {
     private StatusesService statusesService;
     private Context context;
 
+
     public TweetSync(Context context) {
         TwitterApiClient twitterApiClient = TwitterCore.getInstance().getApiClient();
         statusesService = twitterApiClient.getStatusesService();
@@ -76,7 +77,45 @@ public class TweetSync {
                 destroyFavorite(tweet);
             }
         }
+
+        RealmResults<TweetData> retweeteModifiedTweets = TweetDAO.newInstance().getRetweetModifiedTweets(realm);
+        for (TweetData tweet : retweeteModifiedTweets) {
+            if (tweet.isRetweeted()) {
+                createRetweet(tweet);
+            } else {
+                destroyRetweet(tweet);
+            }
+        }
+
         realm.close();
+    }
+
+    private void destroyRetweet(TweetData tweet) {
+        statusesService.unretweet(tweet.getId(), null, new Callback<Tweet>() {
+            @Override
+            public void success(Result<Tweet> result) {
+                L.i("destroyRetweet success");
+            }
+
+            @Override
+            public void failure(TwitterException e) {
+                L.i("destroyRetweet failed");
+            }
+        });
+    }
+
+    private void createRetweet(TweetData tweet) {
+        statusesService.retweet(tweet.getId(), null, new Callback<Tweet>() {
+            @Override
+            public void success(Result<Tweet> result) {
+                L.i("createRetweet success");
+            }
+
+            @Override
+            public void failure(TwitterException e) {
+                L.i("createRetweet failed");
+            }
+        });
     }
 
     private void createFavorite(TweetData tweet) {

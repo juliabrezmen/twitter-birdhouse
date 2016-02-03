@@ -9,11 +9,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.bd.R;
 import com.bd.database.RealmString;
 import com.bd.database.TweetData;
 import com.bd.imageloader.CircleTransform;
+import com.bd.managers.PreferencesManager;
 import com.bd.utils.DateUtils;
 import com.bd.utils.SpannableUtils;
 import com.bd.utils.UrlUtils;
@@ -52,8 +54,20 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
         TweetData originTweet = tweet.getOriginTweet();
         if (originTweet != null) {
             initTweetDetails(viewHolder, originTweet);
+            viewHolder.txtCreatedAt.setText(DateUtils.createShortDate(tweet.getDate()));
+            viewHolder.retweetLayout.setVisibility(View.VISIBLE);
+
+            String currentUsername = PreferencesManager.getUserName(context);
+            String userName = tweet.getFullName();
+            if (userName.equals(currentUsername)) {
+                viewHolder.txtUserRetweet.setText("You");
+            } else {
+                viewHolder.txtUserRetweet.setText(userName);
+            }
+
         } else {
             initTweetDetails(viewHolder, tweet);
+            viewHolder.retweetLayout.setVisibility(View.GONE);
         }
     }
 
@@ -122,20 +136,33 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
         }
     }
 
-    private void initRetweetView(ViewHolder viewHolder, final TweetData tweet) {
-        if (tweet.isRetweeted()) {
+    private void initRetweetView(final ViewHolder viewHolder, final TweetData tweet) {
+        setRetweet(viewHolder, tweet.isRetweeted());
+
+        viewHolder.imgRetweeted.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setRetweet(viewHolder, !tweet.isRetweeted());
+                int count = tweet.getRetweetCount();
+                if (tweet.isRetweeted()) {
+                    viewHolder.txtRetweetCount.setText(String.valueOf(count - 1));
+                } else {
+                    viewHolder.txtRetweetCount.setText(String.valueOf(count + 1));
+                }
+
+                listener.onRetweetClicked(tweet);
+            }
+        });
+    }
+
+    private void setRetweet(ViewHolder viewHolder, boolean isFavorited) {
+        if (isFavorited) {
             viewHolder.imgRetweeted.setImageResource(R.drawable.ic_retweet_white);
             viewHolder.txtRetweetCount.setTextColor(context.getResources().getColor(R.color.gray_200));
         } else {
             viewHolder.imgRetweeted.setImageResource(R.drawable.ic_retweet_gray);
             viewHolder.txtRetweetCount.setTextColor(context.getResources().getColor(R.color.gray_600));
         }
-        viewHolder.imgRetweeted.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                listener.onRetweetClicked(tweet);
-            }
-        });
     }
 
     private void initFavoriteView(final ViewHolder viewHolder, final TweetData tweet) {
@@ -144,8 +171,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
             @Override
             public void onClick(View v) {
                 setFavourite(viewHolder, !tweet.isFavorited());
-
-                int count = Integer.parseInt(viewHolder.txtFavouriteCount.getText().toString());
+                int count = tweet.getFavoriteCount();
                 if (tweet.isFavorited()) {
                     viewHolder.txtFavouriteCount.setText(String.valueOf(count - 1));
                 } else {
@@ -191,10 +217,12 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
         TextView txtNickName;
         TextView txtFavouriteCount;
         TextView txtRetweetCount;
+        TextView txtUserRetweet;
         ImageView imgAvatar;
         ImageView imgRetweeted;
         ImageView imgFavorited;
         ImageView imgTweet;
+        LinearLayout retweetLayout;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -204,10 +232,12 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
             txtNickName = (TextView) itemView.findViewById(R.id.txt_nick_name);
             txtFavouriteCount = (TextView) itemView.findViewById(R.id.txt_favourite_count);
             txtRetweetCount = (TextView) itemView.findViewById(R.id.txt_retweet_count);
+            txtUserRetweet = (TextView) itemView.findViewById(R.id.txt_user_retweet);
             imgAvatar = (ImageView) itemView.findViewById(R.id.img_avatar);
             imgRetweeted = (ImageView) itemView.findViewById(R.id.img_retweeted);
             imgFavorited = (ImageView) itemView.findViewById(R.id.img_favorited);
             imgTweet = (ImageView) itemView.findViewById(R.id.img_tweet);
+            retweetLayout = (LinearLayout) itemView.findViewById(R.id.retweet_layout);
         }
     }
 

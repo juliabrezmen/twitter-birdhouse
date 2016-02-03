@@ -1,5 +1,6 @@
 package com.bd.database;
 
+import android.support.annotation.NonNull;
 import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
@@ -11,12 +12,15 @@ public class TweetData extends RealmObject {
     @PrimaryKey
     private String stringId;
     private long id;
-    private String text;
     private int favoriteCount;
     private int retweetCount;
     private boolean favorited;
     private boolean retweeted;
+    private boolean isFavouriteModified;
+    private boolean isRetweetModified;
+    private boolean isOrigin;
     private Date date;
+    private String text;
     private String fullName;
     private String nickName;
     private String avatarUrl;
@@ -24,11 +28,7 @@ public class TweetData extends RealmObject {
     private RealmList<RealmString> hashtagList;
     private RealmList<RealmString> userMentionsList;
     private RealmList<RealmString> urlList;
-    private boolean isFavouriteModified;
-    private boolean isRetweetModified;
-
     private TweetData originTweet;
-    private long originId;
 
     public long getId() {
         return id;
@@ -46,12 +46,12 @@ public class TweetData extends RealmObject {
         this.originTweet = originTweet;
     }
 
-    public long getOriginId() {
-        return originId;
+    public boolean isOrigin() {
+        return isOrigin;
     }
 
-    public void setOriginId(long originId) {
-        this.originId = originId;
+    public void setOrigin(boolean origin) {
+        isOrigin = origin;
     }
 
     public boolean isFavouriteModified() {
@@ -180,5 +180,29 @@ public class TweetData extends RealmObject {
 
     public void setAvatarUrl(String avatarUrl) {
         this.avatarUrl = avatarUrl;
+    }
+
+    @NonNull
+    public static TweetData copyFrom(@NonNull TweetData from) {
+        TweetData to = new TweetData();
+
+        to.setStringId(from.getStringId());
+        to.setId(from.getId());
+        to.setFavoriteCount(from.getFavoriteCount());
+        to.setRetweetCount(from.getRetweetCount());
+        to.setFavorited(from.isFavorited());
+        to.setRetweeted(from.isRetweeted());
+        to.setOrigin(from.isOrigin());
+        to.setDate(from.getDate());
+        to.setText(from.getText());
+        to.setFullName(from.getFullName());
+        to.setNickName(from.getNickName());
+        to.setAvatarUrl(from.getAvatarUrl());
+        to.setTweetImageUrl(from.getTweetImageUrl());
+        to.setHashtagList(from.getHashtagList());
+        to.setUserMentionsList(from.getUserMentionsList());
+        to.setUrlList(from.getUrlList());
+
+        return to;
     }
 }
