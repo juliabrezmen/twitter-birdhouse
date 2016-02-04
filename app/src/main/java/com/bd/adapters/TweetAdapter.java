@@ -17,6 +17,7 @@ import com.bd.database.TweetData;
 import com.bd.imageloader.CircleTransform;
 import com.bd.managers.PreferencesManager;
 import com.bd.utils.DateUtils;
+import com.bd.utils.FontUtils;
 import com.bd.utils.SpannableUtils;
 import com.bd.utils.UrlUtils;
 import com.squareup.picasso.Picasso;
@@ -37,9 +38,9 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
         this.tweetDataList = new ArrayList<>();
         this.context = context;
         this.listener = listener;
-        this.hashTagColor = context.getResources().getColor(R.color.blue);
-        this.userMentionsColor = context.getResources().getColor(R.color.orange);
-        this.urlColor = context.getResources().getColor(R.color.blue);
+        this.hashTagColor = getColor(R.color.blue);
+        this.userMentionsColor = getColor(R.color.orange);
+        this.urlColor = getColor(R.color.blue);
     }
 
     @Override
@@ -71,6 +72,11 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
         }
     }
 
+    @Override
+    public int getItemCount() {
+        return tweetDataList.size();
+    }
+
     private void initTweetDetails(ViewHolder viewHolder, TweetData tweet) {
         viewHolder.txtFullName.setText(tweet.getFullName());
         viewHolder.txtNickName.setText(tweet.getNickName());
@@ -90,6 +96,12 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
         initRetweetView(viewHolder, tweet);
         initAvatarView(viewHolder, tweet);
         initTweetImage(viewHolder, tweet);
+    }
+
+    public void updateData(List<TweetData> tweetList) {
+        if (tweetDataList != null) {
+            this.tweetDataList = tweetList;
+        }
     }
 
     private void initAvatarView(ViewHolder viewHolder, TweetData tweet) {
@@ -158,10 +170,10 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
     private void setRetweet(ViewHolder viewHolder, boolean isFavorited) {
         if (isFavorited) {
             viewHolder.imgRetweeted.setImageResource(R.drawable.ic_retweet_white);
-            viewHolder.txtRetweetCount.setTextColor(context.getResources().getColor(R.color.gray_200));
+            viewHolder.txtRetweetCount.setTextColor(getColor(R.color.gray_200));
         } else {
             viewHolder.imgRetweeted.setImageResource(R.drawable.ic_retweet_gray);
-            viewHolder.txtRetweetCount.setTextColor(context.getResources().getColor(R.color.gray_600));
+            viewHolder.txtRetweetCount.setTextColor(getColor(R.color.gray_600));
         }
     }
 
@@ -183,25 +195,19 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
         });
     }
 
+
     private void setFavourite(ViewHolder viewHolder, boolean isFavorited) {
         if (isFavorited) {
             viewHolder.imgFavorited.setImageResource(R.drawable.ic_heart_red);
-            viewHolder.txtFavouriteCount.setTextColor(context.getResources().getColor(R.color.red));
+            viewHolder.txtFavouriteCount.setTextColor(getColor(R.color.red));
         } else {
             viewHolder.imgFavorited.setImageResource(R.drawable.ic_heart_gray);
-            viewHolder.txtFavouriteCount.setTextColor(context.getResources().getColor(R.color.gray_600));
+            viewHolder.txtFavouriteCount.setTextColor(getColor(R.color.gray_600));
         }
     }
 
-    @Override
-    public int getItemCount() {
-        return tweetDataList.size();
-    }
-
-    public void updateData(List<TweetData> tweetList) {
-        if (tweetDataList != null) {
-            this.tweetDataList = tweetList;
-        }
+    private int getColor(int colour) {
+        return context.getResources().getColor(colour);
     }
 
     public interface Listener {
@@ -238,6 +244,13 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
             imgFavorited = (ImageView) itemView.findViewById(R.id.img_favorited);
             imgTweet = (ImageView) itemView.findViewById(R.id.img_tweet);
             retweetLayout = (LinearLayout) itemView.findViewById(R.id.retweet_layout);
+
+            FontUtils.setFont(txtFullName, FontUtils.Font.ROBOTO_MEDIUM);
+            FontUtils.setFont(txtNickName, FontUtils.Font.ROBOTO_MEDIUM);
+            FontUtils.setFont(txtCreatedAt, FontUtils.Font.ROBOTO_LIGHT);
+            FontUtils.setFont(txtTweetText, FontUtils.Font.ROBOTO_LIGHT);
+            FontUtils.setFont(txtRetweetCount, FontUtils.Font.ROBOTO_LIGHT);
+            FontUtils.setFont(txtFavouriteCount, FontUtils.Font.ROBOTO_LIGHT);
         }
     }
 
