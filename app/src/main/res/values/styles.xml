@@ -9,4 +9,7 @@
         <item name="android:windowBackground">@color/gray_1000</item>
     </style>
 
+    <style name="MyFloatingButton" parent="Theme.AppCompat.Light">
+        <item name="colorAccent">@color/orange</item>
+    </style>
 </resources>

@@ -7,6 +7,7 @@ import com.bd.services.Action;
 import com.bd.services.TwitterSyncService;
 import com.bd.ui.HomeActivity;
 import com.bd.ui.LoginActivity;
+import com.bd.ui.NewTweetActivity;
 import com.bd.utils.L;
 import com.twitter.sdk.android.Twitter;
 import io.realm.Realm;
@@ -62,6 +63,10 @@ public class HomePresenter {
             TweetDAO.newInstance().setRetweeted(tweet.getId(), true, tweet.getRetweetCount() + 1);
         }
         TwitterSyncService.start(activity.getApplicationContext(), Action.POST_TWEETS);
+    }
+
+    public void onNewTweetClicked() {
+        NewTweetActivity.start(activity);
     }
 
     public void onActivityDestroy() {
